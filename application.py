@@ -16,11 +16,11 @@ def get_post(post_id):
         abort(404)
     return post
 
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secretsecretsecretkey'
+application = Flask(__name__)
+application.config['SECRET_KEY'] = 'secretsecretsecretkey'
 
 
-@app.route('/')
+@application.route('/')
 def index():
     conn = get_db_connection()
     posts = conn.execute('SELECT * FROM posts').fetchall()
@@ -28,14 +28,14 @@ def index():
     return render_template('index.html', posts=posts)
 
 
-@app.route('/<int:post_id>')
+@application.route('/<int:post_id>')
 def post(post_id):
     post = get_post(post_id)
     return render_template('post.html', post=post)
 
 
 #Important Create Post Function --------------------------------
-@app.route('/create', methods=('GET', 'POST'))
+@application.route('/create', methods=('GET', 'POST'))
 def create():
     if request.method == 'POST':
         title = request.form['title']
@@ -56,7 +56,7 @@ def create():
 
 #Edit Post Function -------
 
-@app.route('/<int:id>/edit', methods=('GET', 'POST'))
+@application.route('/<int:id>/edit', methods=('GET', 'POST'))
 def edit(id):
     post = get_post(id)
 
@@ -79,7 +79,7 @@ def edit(id):
 
 
 # The Delete Function -----------------------------------
-@app.route('/<int:id>/delete', methods=('POST',))
+@application.route('/<int:id>/delete', methods=('POST',))
 def delete(id):
     post = get_post(id)
     conn = get_db_connection()
@@ -88,3 +88,6 @@ def delete(id):
     conn.close()
     flash('"{}" was successfully deleted!'.format(post['title']))
     return redirect(url_for('index'))
+
+if __name__ == "__main__":
+    application.run()
